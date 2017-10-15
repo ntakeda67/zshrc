@@ -1,10 +1,35 @@
 # 文字コードの設定
 export LANG=ja_JP.UTF-8
-
 # パスの設定
-PATH=/usr/local/bin:$PATH
+mkdir -p ~/gocode
+export GOPATH=~/gocode
+export PATH=/usr/local/bin:${GOPATH}/bin:${PATH}
 export MANPATH=/usr/local/share/man:/usr/local/man:/usr/share/man
 #export JAVA_HOME=/opt/java
+# Like Emacs
+bindkey -e
+# zplug curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh| zsh
+source ~/.zplug/init.zsh
+zplug 'zsh-users/zsh-completions'
+zplug 'zsh-users/zaw'
+zplug 'zsh-users/zsh-syntax-highlighting', defer:2
+zplug "zsh-users/zsh-history-substring-search"
+## And accept glob patterns (e.g., brace, wildcard, ...)
+zplug "Jxck/dotfiles", as:command, use:"bin/{histuniq,color}"
+## Can manage everything e.g., other person's zshrc
+zplug "tcnksm/docker-alias", use:zshrc
+## Supports oh-my-zsh plugins and the like
+zplug "plugins/git",   from:oh-my-zsh
+zplug "~/.zshrc/lib/", from:local
+## Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+## Then, source plugins and add commands to $PATH
+zplug load --verbose
 # 関数
 find-grep () { find . -type f -print | xargs grep -n --binary-files=without-match $@ }
 
@@ -27,7 +52,7 @@ setopt extended_history
 # 補完するかの質問は画面を超える時にのみに行う｡
 LISTMAX=0
 
-autoload -Uz compinit; compinit
+autoload -U compinit && compinit
 
 # sudo でも補完の対象
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin
@@ -102,7 +127,7 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 function chpwd() { ls }
 
 # ディレクトリ名だけで､ディレクトリの移動をする｡
-setopt auto_cd
+#setopt auto_cd
 
 # C-s, C-qを無効にする。
 #setopt no_flow_control
